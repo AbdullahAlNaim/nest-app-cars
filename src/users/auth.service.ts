@@ -7,11 +7,11 @@ const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class AuthService {
-  constructor(private usersSerivice: UsersService) {}
+  constructor(private usersService: UsersService) {}
 
   async signup(email: string, password: string) {
     // See if email is in use
-    const users = await this.usersSerivice.find(email);
+    const users = await this.usersService.find(email);
     if (users.length) {
       throw new BadRequestException('email in use');
     }
@@ -27,14 +27,14 @@ export class AuthService {
     const result = salt + '.' + hash.toString('hex');
 
     // Create a new user and save it
-    const user = await this.usersSerivice.create(email, result);
+    const user = await this.usersService.create(email, result);
 
     // return the user
     return user;
   }
 
   async signin(email: string, password: string) {
-    const [user] = await this.usersSerivice.find(email);
+    const [user] = await this.usersService.find(email);
     if (!user) {
       throw new NotFoundException('user not found');
     }
